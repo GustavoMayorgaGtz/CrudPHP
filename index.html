@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="keywords" content="CRUD, teclerdo">
+    <meta name="description" content="CRUD UTILIZANDO html, js, php, boostrap y jquery">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="./js/jquery-3.7.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="container">
+        <form id="frmPeliculas" method="post">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h2 class="panel-title">Cabálogo de películas</h2>
+                </div>
+                <div class="panel-body">
+                    <table id="tablaPeliculas" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID_Película</th>
+                                <th>Título</th>
+                                <th>Género</th>
+                                <th>Duración</th>
+                                <th>Clasificación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                    <!-- Button -->
+                    <!-- Button -->
+                    <button type="button" id="new" class="btn btn-primary" data-toggle="modal" data-target="#nuevo">
+                        Nueva película
+                    </button>
+                    <button type="button" id="modificar" class="btn btn-warning" data-toggle="modal"
+                        data-target="#nuevo">Modificar</button>
+                    <button type="button" id="eliminar" class="btn btn-danger">Eliminar</button>
+                </div>
+            </div>
+            <!-- ventana modal -->
+            <div id="nuevo" class="modal fade">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="panel panel-success">
+                            <div class="panel-heading">
+                                <h2 class="panel-title">
+                                    Registro de película
+                                </h2>
+                            </div>
+                            <div class="panel-body">
+                                <!-- Contenido de tu panel body -->
+                                <div class="form-group">
+                                    <label>Titulo:</label>
+                                    <input type="hidden" name="idp" id="idp">
+                                    <input type="text" class="form-control" name="titulo" id="titulo"
+                                        placeholder="Escribe el titulo de la pelicula">
+                                </div>
+                                <div class="form-group">
+                                    <label>Genero:</label>
+                                    <input type="text" class="form-control" name="genero" id="genero"
+                                        placeholder="Escribe el genero de la pelicula">
+                                </div>
+                                <div class="form-group">
+                                    <label>Duracion:</label>
+                                    <input type="text" class="form-control" name="duracion" id="duracion"
+                                        placeholder="Escribe la duracion de la pelicula">
+                                </div>
+                                <div class="form-group">
+                                    <label>Clasificación:</label>
+                                    <input type="text" class="form-control" name="clasificacion" id="clasificacion"
+                                        placeholder="Escribe la clasificacion de la pelicula">
+                                </div>
+                                <div class="panel-footer">
+                                    <button type="button" class="btn btn-success btn-lg"
+                                        id="guardarPelicula">Guardar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+        <script src="./app.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                ajaxPeliculas('seleccionar', 'scripts/peliculas.php', 'frmPeliculas');
+                $('#modificar').attr("disabled", true);
+                $('#eliminar').attr("disabled", true);
+            });
+            $('#guardarPelicula').click(function () {
+                var accion = ($('#idp').val() === '') ? 'insertar' : 'modificar';
+                alert(accion);
+                ajaxPeliculas(accion, 'scripts/peliculas.php', 'frmPeliculas');
+                $('.modal').modal('toggle');
+                ajaxPeliculas('seleccionar', 'scripts/peliculas.php', 'frmPeliculas');
+            })
+            $('#tablaPeliculas').on('click', 'tr', function () {
+                if ($(this).hasClass('warning')) {
+                    $(this).removeClass("warning");
+                    $('#modificar').attr("disabled", true);
+                    $('#eliminar').attr("disabled", true);
+                    $('#new').attr("disabled", false);
+                    $('input').val('');
+                } else {
+                    $(this).siblings('tr').removeClass('warning');
+                    $(this).addClass("warning");
+                    $('#modificar').attr("disabled", false);
+                    $('#eliminar').attr("disabled", false);
+                    $('#new').attr("disabled", true);
+                    $('#idp').val($(this).children("td:nth-child(1)").text());
+                    $('#titulo').val($(this).children("td:nth-child(2)").text());
+                    $('#genero').val($(this).children("td:nth-child(3)").text());
+                    $('#duracion').val($(this).children("td:nth-child(4)").text());
+                    $('#clasificacion').val($(this).children("td:nth-child(5)").text());
+                    console.log($('#idp').val());
+                }
+            });
+
+            $('#eliminar').click(function () {
+                ajaxPeliculas('eliminar', 'scripts/peliculas.php', 'frmPeliculas');
+                $('#tablaPeliculas tbody').empty();
+                ajaxPeliculas('seleccionar', 'scripts/peliculas.php', 'frmPeliculas');
+            });
+            /*
+                        $('#modificar').click(function(){
+                            ajaxPeliculas('modificar', 'scripts/peliculas.php', 'frmPeliculas');
+                            $('#tablaPeliculas tbody').empty();
+                            ajaxPeliculas('seleccionar', 'scripts/peliculas.php', 'frmPeliculas');
+                        }); */
+
+
+        </script>
+</body>
+
+</html>
